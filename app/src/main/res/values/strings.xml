@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Dooyd</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="password">Password</string>
+    <string name="login">LOGIN</string>
+    <string name="mobile_email">Mobile/Email</string>
+    <string name="remember_me">Remember Me</string>
+    <string name="have_an_account">Have an account?</string>
+    <string name="login_here">Login Here</string>
+    <string name="register_here">Register Now!</string>
+    <string name="don_t_have_an_account">Don\'t have an account</string>
+    <string name="registration">Register</string>
+    <string name="name">Name*</string>
+    <string name="mobile">Mobile*</string>
+    <string name="email">Email*</string>
+    <string name="_password">Password*</string>
+    <string name="already_have_an_account">Already have an account?</string>
+    <string name="login_now">Login now!</string>
+    <string name="lost_your_password">Lost your password?</string>
+    <string name="forgot_password">Forgot Password!</string>
+    <string name="home">Home</string>
+    <string name="chat">Chat</string>
+    <string name="profile">Profile</string>
+    <string name="rupee_value">₹</string>
+</resources>
