@@ -18,9 +18,7 @@
                 android:layout_height="200dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-        />
-
+                app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/homeRecyclerView"
@@ -28,12 +26,15 @@
                 android:layout_height="0dp"
                 android:paddingTop="@dimen/category_item_top_bottom_margin"
                 android:paddingBottom="@dimen/category_item_top_bottom_margin"
+                android:paddingStart="@dimen/category_item_start_end_margin"
+                android:paddingLeft="@dimen/category_item_start_end_margin"
+                android:paddingRight="@dimen/category_item_start_end_margin"
+                android:paddingEnd="@dimen/category_item_start_end_margin"
                 android:clipToPadding="false"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/slideViewPager"
-                app:layout_constraintBottom_toBottomOf="parent"
-        />
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

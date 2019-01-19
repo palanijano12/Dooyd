@@ -1,5 +1,6 @@
 package views.activities;
 
+import android.content.res.TypedArray;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -7,15 +8,12 @@ import com.android.dooyd.R;
 import com.google.android.material.tabs.TabLayout;
 import views.adapter.MainPagerAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener {
 
 
     private ViewPager mainViewPager;
     private TabLayout mainTabs;
-
-    private final int[] tabIcons = {R.drawable.ic_home_black_24dp, R.drawable.ic_shopping_cart_black_24dp, R.drawable.ic_shopping_basket_black_24dp,
-            R.drawable.ic_person_black_24dp, R.drawable.ic_dashboard_black_24dp};
-
+    private TypedArray tab_Icons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +21,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initViews();
 
-        mainViewPager.setAdapter(new MainPagerAdapter(getSupportFragmentManager()));
+        tab_Icons = getResources().obtainTypedArray(R.array.tab_icons);
+
+        mainViewPager.setAdapter(new MainPagerAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.tab_titles)));
+        mainViewPager.addOnPageChangeListener(this);
         mainTabs.setupWithViewPager(mainViewPager);
+
         setUpTabs(mainTabs);
     }
 
@@ -38,10 +40,27 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < tabLayout.getTabCount(); i++) {
             TabLayout.Tab tab = tabLayout.getTabAt(i);
             if (tab != null) {
-                tab.setIcon(tabIcons[i]);
+                tab.setIcon(tab_Icons.getResourceId(i, -1));
             }
         }
+        tab_Icons.recycle();
     }
 
 
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        if (position == (mainTabs.getTabCount() - 1)) {
+            finish();
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

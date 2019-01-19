@@ -5,7 +5,7 @@
     <dimen name="login_startEndMargin">16dp</dimen>
     <dimen name="login_ViewJoinMargin">8dp</dimen>
     <dimen name="registration_start_end_margin">16dp</dimen>
-    <dimen name="category_item_start_end_margin">12dp</dimen>
+    <dimen name="category_item_start_end_margin">6dp</dimen>
     <dimen name="category_item_top_bottom_margin">6dp</dimen>
     <dimen name="main_item_top_margin">16dp</dimen>
 </resources>

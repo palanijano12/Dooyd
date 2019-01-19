@@ -63,7 +63,7 @@ public class HomeRecyclerAdapter extends RecyclerView.Adapter<HomeRecyclerAdapte
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.category_card: {
-                    homeRecyclerListener.onItemClick((int) v.getTag());
+                    homeRecyclerListener.onItemClick((int) v.getTag(), categoryList.get((int) v.getTag()));
                     break;
                 }
             }

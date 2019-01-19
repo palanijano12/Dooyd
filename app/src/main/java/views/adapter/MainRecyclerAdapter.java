@@ -1,6 +1,7 @@
 package views.adapter;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,8 @@ public class MainRecyclerAdapter extends RecyclerView.Adapter<MainRecyclerAdapte
             itemPrice = itemView.findViewById(R.id.item_price_view);
             itemCutPrice = itemView.findViewById(R.id.item_cut_price_view);
             itemImageView = itemView.findViewById(R.id.item_image_view);
+
+            itemCutPrice.setPaintFlags(Paint.STRIKE_THRU_TEXT_FLAG);
 
         }
     }

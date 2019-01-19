@@ -7,20 +7,22 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentStatePagerAdapter;
 import views.fragments.CartFragment;
 import views.fragments.HomeFragment;
+import views.fragments.ProfileFragment;
 
 public class MainPagerAdapter extends FragmentStatePagerAdapter {
 
-    private final String[] tabTitles = new String[]{"Home", "Cart", "Order", "Profile", "Exit"};
+    private String[] tabTitles;
 
-
-    public MainPagerAdapter(@NonNull FragmentManager fm) {
+    public MainPagerAdapter(@NonNull FragmentManager fm, String[] tabTitles) {
         super(fm);
+        this.tabTitles = tabTitles;
     }
 
     @NonNull
     @Override
     public Fragment getItem(int position) {
         switch (position) {
+
             case 0: {
                 return HomeFragment.newInstance();
             }
@@ -31,13 +33,7 @@ public class MainPagerAdapter extends FragmentStatePagerAdapter {
                 return new CartFragment();
             }
             case 3: {
-                return new CartFragment();
-            }
-            case 4: {
-                return new CartFragment();
-            }
-            case 5: {
-                return new CartFragment();
+                return new ProfileFragment();
             }
             default: {
                 return new CartFragment();

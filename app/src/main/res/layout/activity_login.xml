@@ -18,6 +18,7 @@
             android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
+                style="@style/AppTextInputEditTextStyle"
                 android:id="@+id/loginUserNameView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -38,9 +39,10 @@
             android:layout_height="wrap_content">
 
         <com.google.android.material.textfield.TextInputEditText
+                style="@style/AppTextInputEditTextStyle"
                 android:id="@+id/loginPasswordView"
                 android:hint="@string/password"
-                android:inputType="textPassword"
+                android:inputType="textWebPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -54,11 +56,11 @@
             app:backgroundTint="@color/colorAccent"
             android:text="@string/login"
             app:layout_constraintTop_toBottomOf="@id/loginPasswordLayout"
-            android:layout_marginTop="@dimen/login_ViewJoinMargin"
+            android:layout_marginTop="@dimen/login_startEndMargin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-    <com.google.android.material.checkbox.MaterialCheckBox
+    <androidx.appcompat.widget.AppCompatCheckBox
             android:text="@string/remember_me"
             android:layout_width="wrap_content"
             android:layout_marginStart="@dimen/login_ViewJoinMargin"

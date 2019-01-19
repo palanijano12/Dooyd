@@ -24,7 +24,7 @@ public class MainFragment extends Fragment implements LifecycleOwner {
     private MainRecyclerAdapter mainRecyclerAdapter;
     private LifecycleRegistry mLifecycleRegistry;
 
-    private static int itemPosition;
+    private int itemPosition;
     private final String[] apiUrls =
             {
                     "Product/GetProcurementProducts/1",
@@ -34,11 +34,6 @@ public class MainFragment extends Fragment implements LifecycleOwner {
             };
 
 
-    public static MainFragment newInstance(int selectedPosition) {
-        itemPosition = selectedPosition;
-        return new MainFragment();
-    }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
@@ -46,13 +41,22 @@ public class MainFragment extends Fragment implements LifecycleOwner {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         initViews(rootView);
 
+        if (getArguments() != null) {
+            if (getActivity() != null) {
+                getActivity().setTitle("" + getArguments().getString("CATEGORY_NAME", ""));
+            }
+            itemPosition = getArguments().getInt("POSITION", 0);
+        }
+
+
         mainRecyclerView.setHasFixedSize(true);
-        mainRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        mainRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
         mLifecycleRegistry = new LifecycleRegistry(this);
 
         return rootView;
     }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -95,5 +99,8 @@ public class MainFragment extends Fragment implements LifecycleOwner {
     public void onDestroyView() {
         super.onDestroyView();
         mLifecycleRegistry.markState(Lifecycle.State.DESTROYED);
+        if (getActivity() != null) {
+            getActivity().setTitle(getString(R.string.app_name));
+        }
     }
 }

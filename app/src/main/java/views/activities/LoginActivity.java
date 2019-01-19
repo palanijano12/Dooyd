@@ -2,24 +2,33 @@ package views.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import com.android.dooyd.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import datamodel.Constants;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import org.json.JSONException;
+import org.json.JSONObject;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import webservices.WebService;
+
+import java.io.IOException;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextInputEditText editTextUserName;
     private TextInputEditText editTextPassword;
-    private MaterialButton loginButton;
-    private AppCompatTextView registerNow;
-    private AppCompatTextView forgotPassword;
-
-    private String userName, password;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -32,9 +41,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void initViews() {
         editTextUserName = findViewById(R.id.loginUserNameView);
         editTextPassword = findViewById(R.id.loginPasswordView);
-        loginButton = findViewById(R.id.loginButton);
-        registerNow = findViewById(R.id.registerNow);
-        forgotPassword = findViewById(R.id.forgot_password);
+        MaterialButton loginButton = findViewById(R.id.loginButton);
+        AppCompatTextView registerNow = findViewById(R.id.registerNow);
+        AppCompatTextView forgotPassword = findViewById(R.id.forgot_password);
 
         //SET CLICK EVENTS
         loginButton.setOnClickListener(this);
@@ -52,6 +61,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.registerNow: {
                 startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
+                finish();
                 break;
             }
 
@@ -69,16 +79,74 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     private void login() {
 
-        if (editTextUserName.getText() != null) {
-            userName = editTextUserName.getText().toString().trim();
-        } else {
-            showToast("Mobile/Email not be empty");
-        }
+        JSONObject rawJson = new JSONObject();
 
-        if (editTextPassword.getText() != null) {
-            password = editTextPassword.getText().toString().trim();
+        if (!TextUtils.isEmpty(editTextUserName.getText()) && editTextUserName.getText() != null) {
+            String userName = editTextUserName.getText().toString();
+
+            if (!TextUtils.isEmpty(editTextPassword.getText()) && editTextPassword.getText() != null) {
+                String password = editTextPassword.getText().toString();
+
+                try {
+                    rawJson.put("username", userName);
+                    rawJson.put("password", password);
+                    rawJson.put("userType", "1");
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rawJson.toString());
+
+                WebService.createApiService().validateCustomerLogin(body).enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+
+                        Log.d("REG RESPONSE", "" + response);
+
+                        if (response.isSuccessful() && response.message().matches("OK")) {
+                            //SUCCESSFUL LOGIN
+                            try {
+                                JSONObject responseJson = new JSONObject(response.body());
+                                Constants.USER_TOKEN = responseJson.getString("token");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            finish();
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        } else {
+
+                            if (response.message().matches("Bad Request")) {
+                                try {
+                                    if (response.errorBody() != null) {
+                                        showToast("" + response.errorBody().string());
+                                    } else {
+                                        showToast("Error occurred try again later.");
+                                    }
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+                            } else {
+                                showToast("Error occurred try again later.");
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                        showToast("" + t.getMessage());
+                    }
+                });
+
+            } else {
+                showToast("Password not be empty");
+            }
         } else {
-            showToast("Password not be empty");
+
+            showToast("Mobile/Email not be empty");
         }
 
 
