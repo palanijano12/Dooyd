@@ -20,6 +20,9 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initViews();
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
 
         tab_Icons = getResources().obtainTypedArray(R.array.tab_icons);
 

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +22,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import webservices.WebService;
 
+import java.util.regex.Pattern;
+
 public class RegistrationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextInputEditText editTextName;
@@ -28,11 +31,16 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
     private TextInputEditText editTextEmail;
     private TextInputEditText editTextPassword;
 
+    private Pattern pattern;
+    private ProgressBar regProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         initViews();
+
+        pattern = Pattern.compile("((?=.*\\d)(?=.*[A-Z])(?=.*\\W).{8,8})");
 
     }
 
@@ -41,6 +49,8 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         editTextMobile = findViewById(R.id.regMobileView);
         editTextEmail = findViewById(R.id.regEmailView);
         editTextPassword = findViewById(R.id.regPasswordView);
+        regProgressBar = findViewById(R.id.regProgressBar);
+
         MaterialButton buttonRegister = findViewById(R.id.registerButton);
         AppCompatTextView loginNow = findViewById(R.id.login_now_view);
 
@@ -60,56 +70,68 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
                 if (!TextUtils.isEmpty(editTextEmail.getText()) && editTextEmail.getText() != null) {
 
-                    if (!TextUtils.isEmpty(editTextPassword.getText()) && editTextPassword.getText() != null) {
+                    if (isValidEmail(editTextEmail.getText())) {
 
-                        try {
-                            rawJson.put("name", editTextName.getText().toString());
-                            rawJson.put("mobile", editTextMobile.getText().toString());
-                            rawJson.put("email", editTextEmail.getText().toString());
-                            rawJson.put("password", editTextPassword.getText().toString());
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        if (!TextUtils.isEmpty(editTextPassword.getText()) && editTextPassword.getText() != null) {
 
-                        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rawJson.toString());
+                            if (pattern.matcher(editTextPassword.getText()).find()) {
 
-                        WebService.createApiService().addCustomerProfile(body).enqueue(new Callback<String>() {
-                            @Override
-                            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+                                regProgressBar.setVisibility(View.VISIBLE);
 
-                                Log.d("REG RESPONSE", "" + response);
-                                if (response.body() != null && response.isSuccessful() && response.message().matches("OK")) {
-                                    if (response.body().matches("Registered successfully & Activation Mail sent to your mail")) {
-                                        showToast(response.body());
-                                        editTextName.getText().clear();
-                                        editTextMobile.getText().clear();
-                                        editTextEmail.getText().clear();
-                                        editTextPassword.getText().clear();
-                                        startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
-                                        finish();
-                                    } else {
-                                        if (response.body().matches("Mobile/Email alredy exists")) {
-                                            showToast(response.body());
-                                            editTextName.requestFocus();
+                                try {
+                                    rawJson.put("name", editTextName.getText().toString());
+                                    rawJson.put("mobile", editTextMobile.getText().toString());
+                                    rawJson.put("email", editTextEmail.getText().toString());
+                                    rawJson.put("password", editTextPassword.getText().toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rawJson.toString());
+
+                                WebService.createApiService().addCustomerProfile(body).enqueue(new Callback<String>() {
+                                    @Override
+                                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
+
+                                        Log.d("REG RESPONSE", "" + response);
+                                        if (response.body() != null && response.isSuccessful()) {
+                                            if (response.body().matches("Registered successfully & Activation Mail sent to your mail")) {
+                                                showToast(response.body());
+                                                editTextName.getText().clear();
+                                                editTextMobile.getText().clear();
+                                                editTextEmail.getText().clear();
+                                                editTextPassword.getText().clear();
+                                                startActivity(new Intent(RegistrationActivity.this, LoginActivity.class));
+                                                finish();
+                                            } else {
+                                                if (response.body().matches("Mobile/Email alredy exists")) {
+                                                    showToast(response.body());
+                                                    editTextName.requestFocus();
+                                                } else {
+                                                    showToast("Error occurred try again later.");
+                                                }
+                                            }
+
                                         } else {
                                             showToast("Error occurred try again later.");
                                         }
+
                                     }
 
-                                } else {
-                                    showToast("Error occurred try again later.");
-                                }
-
+                                    @Override
+                                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                                        showToast("" + t.getMessage());
+                                    }
+                                });
+                            } else {
+                                showToast("Invalid Password, Try with atleast one special character,one alpha numeric values,one uppercase letter & minimum 8 characters");
                             }
 
-                            @Override
-                            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
-                                showToast("" + t.getMessage());
-                            }
-                        });
-
+                        } else {
+                            showToast("Password not be empty");
+                        }
                     } else {
-                        showToast("Password not be empty");
+                        showToast("Invalid Email Id");
                     }
 
                 } else {
@@ -127,6 +149,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        regProgressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -134,6 +157,7 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
 
         switch (v.getId()) {
             case R.id.registerButton: {
+
                 register();
                 break;
             }
@@ -146,4 +170,13 @@ public class RegistrationActivity extends AppCompatActivity implements View.OnCl
         }
 
     }
+
+    private boolean isValidEmail(CharSequence target) {
+        if (TextUtils.isEmpty(target)) {
+            return false;
+        } else {
+            return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+        }
+    }
+
 }

@@ -3,8 +3,6 @@ package datamodel;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 public class MainItem {
 
     @SerializedName("id")
@@ -23,17 +21,21 @@ public class MainItem {
     @Expose
     private int itemCutPrice;
 
-    @SerializedName("tag")
+    @SerializedName("quantity")
     @Expose
-    private String itemTag;
+    private int quantity;
 
     @SerializedName("isactive")
     @Expose
     private int itemActive;
 
-    @SerializedName("productImage")
+    @SerializedName("imageUrl")
     @Expose
-    private List<ImageUrl> itemImageUrls;
+    private String itemImageUrl;
+
+    @SerializedName("createdDate")
+    @Expose
+    private String createdDate;
 
     public String getItemId() {
         return itemId;
@@ -67,14 +69,6 @@ public class MainItem {
         this.itemCutPrice = itemCutPrice;
     }
 
-    public String getItemTag() {
-        return itemTag;
-    }
-
-    public void setItemTag(String itemTag) {
-        this.itemTag = itemTag;
-    }
-
     public int getItemActive() {
         return itemActive;
     }
@@ -83,27 +77,27 @@ public class MainItem {
         this.itemActive = itemActive;
     }
 
-    public List<ImageUrl> getItemImageUrls() {
-        return itemImageUrls;
+    public String getCreatedDate() {
+        return createdDate;
     }
 
-    public void setItemImageUrls(List<ImageUrl> itemImageUrls) {
-        this.itemImageUrls = itemImageUrls;
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public class ImageUrl {
-
-        @SerializedName("fileUrl")
-        @Expose
-        private String imageUrl;
-
-        public String getImageUrl() {
-            return imageUrl;
-        }
-
-        public void setImageUrl(String imageUrl) {
-            this.imageUrl = imageUrl;
-        }
+    public String getItemImageUrl() {
+        return itemImageUrl;
     }
 
+    public void setItemImageUrl(String itemImageUrl) {
+        this.itemImageUrl = itemImageUrl;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }

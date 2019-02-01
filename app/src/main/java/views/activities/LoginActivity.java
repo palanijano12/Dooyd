@@ -1,10 +1,12 @@
 package views.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +32,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextInputEditText editTextUserName;
     private TextInputEditText editTextPassword;
 
+    private ProgressBar loginProgressBar;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +45,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private void initViews() {
         editTextUserName = findViewById(R.id.loginUserNameView);
         editTextPassword = findViewById(R.id.loginPasswordView);
+        loginProgressBar = findViewById(R.id.loginProgressBar);
+        loginProgressBar.setVisibility(View.INVISIBLE);
         MaterialButton loginButton = findViewById(R.id.loginButton);
         AppCompatTextView registerNow = findViewById(R.id.registerNow);
         AppCompatTextView forgotPassword = findViewById(R.id.forgot_password);
@@ -55,13 +61,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.loginButton: {
+                loginProgressBar.setVisibility(View.VISIBLE);
                 login();
                 break;
             }
 
             case R.id.registerNow: {
-                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
                 finish();
+                startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
                 break;
             }
 
@@ -104,14 +111,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         Log.d("REG RESPONSE", "" + response);
 
-                        if (response.isSuccessful() && response.message().matches("OK")) {
+                        if (response.isSuccessful()) {
                             //SUCCESSFUL LOGIN
                             try {
                                 JSONObject responseJson = new JSONObject(response.body());
-                                Constants.USER_TOKEN = responseJson.getString("token");
+
+                                String userToken = responseJson.getString("token");
+
+                                SharedPreferences settings = getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, MODE_PRIVATE);
+
+                                // WRITING VALUE
+                                SharedPreferences.Editor editor = settings.edit();
+                                editor.putString(Constants.SHARED_KEY_USER_TOKEN, userToken);
+                                editor.putString(Constants.SHARED_KEY_LOGGED_VALUE, "1");
+                                editor.apply();
+
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
+                            loginProgressBar.setVisibility(View.GONE);
+
                             finish();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         } else {

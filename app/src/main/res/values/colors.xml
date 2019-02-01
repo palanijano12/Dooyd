@@ -8,4 +8,5 @@
     <color name="colorGreyedOut">#a7a7a7</color>
     <color name="colorJoinLine">#bfbfbf</color>
     <color name="colorRecyclerBackground">#efefef</color>
+    <color name="colorProgressContainer">#80000000</color>
 </resources>

@@ -1,5 +1,6 @@
 package webservices;
 
+import datamodel.DescItem;
 import datamodel.MainItem;
 import datamodel.ProfileItem;
 import datamodel.SlideItem;
@@ -25,5 +26,11 @@ public interface ApiService {
 
     @GET("Customer/GetCustomerProfile")
     Call<ProfileItem> getCustomerProfile(@Header("Authorization") String value);
+
+    @POST("Customer/UpdateCustomerProfile")
+    Call<String> updateCustomerProfile(@Header("Authorization") String value,@Body RequestBody rawData);
+
+    @GET
+    Call<DescItem> getProductDescription(@Url String url);
 
 }

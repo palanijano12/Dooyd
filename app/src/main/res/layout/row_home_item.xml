@@ -28,14 +28,13 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/card_background"
-        >
+                android:layout_height="match_parent">
 
             <androidx.appcompat.widget.AppCompatTextView
                     style="@style/AppTextViewStyle"
                     android:id="@+id/category_name"
                     android:gravity="center"
+                    android:textStyle="bold"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:textColor="@color/colorAccent"

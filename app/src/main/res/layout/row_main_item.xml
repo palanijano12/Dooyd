@@ -7,7 +7,8 @@
 
     <androidx.cardview.widget.CardView
             style="@style/AppCardViewStyle"
-            android:layout_margin="@dimen/main_item_top_margin"
+            android:id="@+id/productCard"
+            android:layout_margin="@dimen/main_item_margin"
             android:layout_width="0dp"
             app:layout_constraintWidth_percent="0.75"
             android:layout_height="wrap_content"
@@ -65,6 +66,22 @@
                     android:textColor="@color/colorAccent"
                     android:textStyle="bold"
             />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/item_add_cart"
+                    style="@style/AppTextViewStyle"
+                    android:background="@color/colorBlack"
+                    android:textColor="@color/colorWhite"
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:padding="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:text="Add to Cart"
+                    app:layout_constraintTop_toBottomOf="@id/item_cut_price_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
             <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guide_vertical_50"

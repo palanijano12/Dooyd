@@ -4,25 +4,32 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.*;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.android.dooyd.R;
+import datamodel.Constants;
 import datamodel.MainItem;
 import viewmodel.MainViewModel;
-import views.adapter.MainRecyclerAdapter;
+import views.activities.ProductActivity;
+import views.adapter.ProductRecyclerAdapter;
+import views.listener.ProductRecyclerListener;
 
 import java.util.List;
 
-public class MainFragment extends Fragment implements LifecycleOwner {
+public class ProductFragment extends Fragment implements LifecycleOwner, ProductRecyclerListener {
 
 
     private RecyclerView mainRecyclerView;
-    private MainRecyclerAdapter mainRecyclerAdapter;
+    private ProductRecyclerAdapter mainRecyclerAdapter;
     private LifecycleRegistry mLifecycleRegistry;
+    private ProgressBar productProgress;
+
 
     private int itemPosition;
     private final String[] apiUrls =
@@ -43,9 +50,16 @@ public class MainFragment extends Fragment implements LifecycleOwner {
 
         if (getArguments() != null) {
             if (getActivity() != null) {
-                getActivity().setTitle("" + getArguments().getString("CATEGORY_NAME", ""));
+
+                ActionBar actionBar = ((ProductActivity) getActivity()).getSupportActionBar();
+                if (actionBar != null) {
+                    actionBar.setDisplayShowTitleEnabled(true);
+                }
+
+
+                getActivity().setTitle("" + getArguments().getString(Constants.KEY_CATEGORY_NAME, ""));
             }
-            itemPosition = getArguments().getInt("POSITION", 0);
+            itemPosition = getArguments().getInt(Constants.KEY_POSITION, 0);
         }
 
 
@@ -68,9 +82,14 @@ public class MainFragment extends Fragment implements LifecycleOwner {
         mainViewModel.getMainItems(apiUrls[itemPosition]).observe(this, new Observer<List<MainItem>>() {
             @Override
             public void onChanged(List<MainItem> mainItems) {
-                mainRecyclerAdapter = new MainRecyclerAdapter(getActivity(), mainItems);
-                mainRecyclerAdapter.setHasStableIds(true);
-                mainRecyclerView.setAdapter(mainRecyclerAdapter);
+
+                if (getActivity() != null) {
+                    mainRecyclerAdapter = new ProductRecyclerAdapter(getActivity().getApplicationContext(), mainItems, ProductFragment.this, itemPosition);
+                    mainRecyclerAdapter.setHasStableIds(true);
+                    mainRecyclerView.setAdapter(mainRecyclerAdapter);
+                    productProgress.setVisibility(View.GONE);
+                }
+
             }
         });
 
@@ -78,14 +97,8 @@ public class MainFragment extends Fragment implements LifecycleOwner {
 
 
     private void initViews(View v) {
-        mainRecyclerView = v.findViewById(R.id.mainRecyclerView);
-    }
-
-
-    @Override
-    @NonNull
-    public Lifecycle getLifecycle() {
-        return mLifecycleRegistry;
+        mainRecyclerView = v.findViewById(R.id.mainRecyclerView_);
+        productProgress = v.findViewById(R.id.productLoader);
     }
 
 
@@ -99,8 +112,42 @@ public class MainFragment extends Fragment implements LifecycleOwner {
     public void onDestroyView() {
         super.onDestroyView();
         mLifecycleRegistry.markState(Lifecycle.State.DESTROYED);
-        if (getActivity() != null) {
-            getActivity().setTitle(getString(R.string.app_name));
-        }
+
     }
+
+    @Override
+    public void onItemClick(int position, String productId, int viewId) {
+
+        if (getActivity() != null) {
+
+            switch (viewId) {
+                case R.id.productCard: {
+                    Bundle arguments = new Bundle();
+                    arguments.putInt(Constants.KEY_POSITION, position);
+                    arguments.putString(Constants.KEY_PRODUCT_ID, productId);
+
+                    Fragment fragment = new ProductDescriptionFragment();
+                    fragment.setArguments(arguments);
+
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.product_frame_container, fragment).addToBackStack(null).commit();
+
+                    break;
+                }
+
+                case R.id.item_add_cart: {
+                    addItemToCart();
+                    break;
+                }
+            }
+
+
+        }
+
+    }
+
+
+    private void addItemToCart() {
+
+    }
+
 }

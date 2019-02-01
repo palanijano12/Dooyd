@@ -5,17 +5,28 @@
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:background="@color/colorRecyclerBackground"
-        tools:context="views.fragments.MainFragment">
+        tools:context="views.fragments.ProductFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/slideViewHolder"
+                android:layout_width="0dp"
+                android:layout_height="220dp"
+                android:scaleType="fitXY"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+        />
+
         <androidx.viewpager.widget.ViewPager
                 android:id="@+id/slideViewPager"
                 android:layout_width="0dp"
-                android:layout_height="200dp"
+                android:layout_height="220dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"/>

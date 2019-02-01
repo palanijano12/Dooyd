@@ -26,6 +26,12 @@
     <string name="rupee_value">₹</string>
     <string name="forget_activity_label">Forget Password</string>
     <string name="update">Update</string>
+    <string name="price">Price</string>
+    <string name="availability">Availability</string>
+    <string name="category">Category</string>
+    <string name="add_to_cart">Add To Cart</string>
+    <string name="add_to_whislist">Add to Whislist</string>
+    <string name="chat_with_vendor">Chat With Vendor</string>
 
     <string-array name="tab_titles">
         <item>Home</item>

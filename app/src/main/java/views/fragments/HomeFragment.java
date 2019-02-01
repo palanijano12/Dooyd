@@ -1,7 +1,9 @@
 package views.fragments;
 
 import android.animation.Animator;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +22,7 @@ import datamodel.SlideItem;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import views.activities.ProductActivity;
 import views.adapter.HomeRecyclerAdapter;
 import views.adapter.SliderPagerAdapter;
 import views.listener.HomeRecyclerListener;
@@ -34,9 +38,13 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
 
     private SliderPagerAdapter sliderPagerAdapter;
     private ViewPager slideViewPager;
+    private AppCompatImageView slideViewHolder;
 
     private int oldDragPosition = 0;
     private Animator pagerAnimation;
+
+    private ObjectAnimator slideAnimation;
+    private int slideItemValue = 0;
 
     @Nullable
     @Override
@@ -50,7 +58,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
 
         List<String> categoryList = new ArrayList<>();
         categoryList.add("PROCUREMENTS");
-        categoryList.add("DESIGN & ENGINEERING");
+        categoryList.add("DESIGN \n&\n ENGINEERING");
         categoryList.add("CONSTRUCTION");
         categoryList.add("RENTAL EQUIPMENTS");
 
@@ -74,6 +82,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
     private void initViews(View v) {
 
         slideViewPager = v.findViewById(R.id.slideViewPager);
+        slideViewHolder = v.findViewById(R.id.slideViewHolder);
         homeRecyclerView = v.findViewById(R.id.homeRecyclerView);
     }
 
@@ -85,14 +94,19 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
     public void onItemClick(int position, String categoryName) {
         if (getActivity() != null) {
 
-            Bundle arguments = new Bundle();
-            arguments.putInt("POSITION", position);
-            arguments.putString("CATEGORY_NAME", categoryName);
+//            Bundle arguments = new Bundle();
+//            arguments.putInt("POSITION", position);
+//            arguments.putString("CATEGORY_NAME", categoryName);
+//
+//            Fragment fragment = new ProductFragment();
+//            fragment.setArguments(arguments);
 
-            Fragment fragment = new MainFragment();
-            fragment.setArguments(arguments);
+            if (getActivity() != null) {
+                getActivity().startActivity(new Intent(getActivity(), ProductActivity.class).putExtra(Constants.KEY_POSITION, position).putExtra(Constants.KEY_CATEGORY_NAME, categoryName));
 
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+            }
+
+            // getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
         }
 
     }
@@ -108,6 +122,84 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
                 sliderPagerAdapter = new SliderPagerAdapter(getActivity(), response.body());
                 slideViewPager.setAdapter(sliderPagerAdapter);
 
+//                slideViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+//                    @Override
+//                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onPageSelected(int position) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onPageScrollStateChanged(int state) {
+//
+//                        if (state == ViewPager.SCROLL_STATE_DRAGGING) {
+//                            slideViewPager.setX(0);
+//                            slideAnimation.cancel();
+//                        }
+//
+//                    }
+//                });
+//
+//                if (getActivity() != null && response.body() != null) {
+//                    Glide.with(getActivity()).load(response.body().get(0).getItemImageUrl()).into(slideViewHolder);
+//
+//                }
+//
+//                slideViewPager.setX(slideViewPager.getMeasuredWidth());
+//                slideViewPager.setCurrentItem(1);
+//
+//                slideAnimation = ObjectAnimator.ofFloat(slideViewPager, "X", slideViewPager.getMeasuredWidth(), 0);
+//                slideAnimation.setDuration(1200);
+//                slideAnimation.setStartDelay(200);
+//                slideAnimation.setRepeatMode(ValueAnimator.RESTART);
+//                slideAnimation.addListener(new Animator.AnimatorListener() {
+//                    @Override
+//                    public void onAnimationStart(Animator animation) {
+//                        slideViewPager.setCurrentItem(slideItemValue);
+//                        slideItemValue++;
+//                        if (slideItemValue > 2) {
+//                            slideItemValue = 0;
+//                        }
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//
+//                        slideViewPager.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                slideAnimation.start();
+//                            }
+//                        }, 300);
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationCancel(Animator animation) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onAnimationRepeat(Animator animation) {
+//                        //  slideViewPager.setCurrentItem(1);
+//
+//
+//                    }
+//                });
+//                slideAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+//                    @Override
+//                    public void onAnimationUpdate(ValueAnimator animation) {
+//                        slideViewPager.setX(animation.getAnimatedFraction());
+//                    }
+//                });
+//                slideAnimation.start();
+
+
                 if (slideViewPager.getAdapter() != null) {
                     slideViewPager.postDelayed(new Runnable() {
                         @Override
@@ -116,6 +208,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
                         }
                     }, Long.parseLong(Constants.SLIDER_ANIMATION_DURATION));
                 }
+
 
             }
 
