@@ -147,7 +147,8 @@ public class ProductFragment extends Fragment implements LifecycleOwner, Product
 
 
     private void addItemToCart() {
-
+        Fragment fragment = new CartFragment();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.product_frame_container, fragment).addToBackStack(null).commit();
     }
 
 }

@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +18,13 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 import com.android.dooyd.R;
+import com.google.android.material.tabs.TabLayout;
 import datamodel.Constants;
 import datamodel.SlideItem;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import views.activities.MainActivity;
 import views.activities.ProductActivity;
 import views.adapter.HomeRecyclerAdapter;
 import views.adapter.SliderPagerAdapter;
@@ -30,6 +33,8 @@ import webservices.WebService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class HomeFragment extends Fragment implements HomeRecyclerListener {
 
@@ -38,13 +43,18 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
 
     private SliderPagerAdapter sliderPagerAdapter;
     private ViewPager slideViewPager;
+    private TabLayout indicator;
     private AppCompatImageView slideViewHolder;
 
     private int oldDragPosition = 0;
     private Animator pagerAnimation;
 
     private ObjectAnimator slideAnimation;
-    private int slideItemValue = 0;
+
+    private int currentPage = 0;
+    private Timer timer;
+    final private long DELAY = 500;
+    final private long PERIOD = 3000;
 
     @Nullable
     @Override
@@ -84,6 +94,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
         slideViewPager = v.findViewById(R.id.slideViewPager);
         slideViewHolder = v.findViewById(R.id.slideViewHolder);
         homeRecyclerView = v.findViewById(R.id.homeRecyclerView);
+        indicator = v.findViewById(R.id.indicator);
     }
 
     public static HomeFragment newInstance() {
@@ -112,16 +123,15 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
     }
 
     private void getSlideImages() {
-
         Call<List<SlideItem>> call = WebService.createApiService().getSlideImages();
-
-
         call.enqueue(new Callback<List<SlideItem>>() {
             @Override
             public void onResponse(@NonNull Call<List<SlideItem>> call, @NonNull Response<List<SlideItem>> response) {
                 sliderPagerAdapter = new SliderPagerAdapter(getActivity(), response.body());
                 slideViewPager.setAdapter(sliderPagerAdapter);
-
+                indicator.setupWithViewPager(slideViewPager, true);
+                Timer timer = new Timer();
+                timer.scheduleAtFixedRate(new SliderTimer(), 4000, 6000);
 //                slideViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 //                    @Override
 //                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -200,14 +210,33 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
 //                slideAnimation.start();
 
 
-                if (slideViewPager.getAdapter() != null) {
+               /* if (slideViewPager.getAdapter() != null) {
                     slideViewPager.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             animatePagerTransition();
                         }
                     }, Long.parseLong(Constants.SLIDER_ANIMATION_DURATION));
-                }
+                }*/
+
+               /* final Handler handler = new Handler();
+                final Runnable Update = new Runnable() {
+                    public void run() {
+                        if (currentPage == sliderPagerAdapter.getCount()-1) {
+                            currentPage = 0;
+                        }
+                        slideViewPager.setCurrentItem(currentPage);
+                        currentPage++;
+                    }
+                };
+
+                timer = new Timer(); // This will create a new Thread
+                timer.schedule(new TimerTask() { // task to be scheduled
+                    @Override
+                    public void run() {
+                        handler.post(Update);
+                    }
+                }, DELAY, PERIOD);*/
 
 
             }
@@ -272,6 +301,26 @@ public class HomeFragment extends Fragment implements HomeRecyclerListener {
         animator.setRepeatCount(2);
 
         return animator;
+    }
+
+
+    private class SliderTimer extends TimerTask {
+
+        @Override
+        public void run() {
+            if (getActivity() != null){
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (slideViewPager.getCurrentItem() < sliderPagerAdapter.getCount() - 1) {
+                            slideViewPager.setCurrentItem(slideViewPager.getCurrentItem() + 1);
+                        } else {
+                            slideViewPager.setCurrentItem(0);
+                        }
+                    }
+                });
+            }
+        }
     }
 
 

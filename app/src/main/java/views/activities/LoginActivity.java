@@ -90,10 +90,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         if (!TextUtils.isEmpty(editTextUserName.getText()) && editTextUserName.getText() != null) {
             String userName = editTextUserName.getText().toString();
-
             if (!TextUtils.isEmpty(editTextPassword.getText()) && editTextPassword.getText() != null) {
                 String password = editTextPassword.getText().toString();
-
                 try {
                     rawJson.put("username", userName);
                     rawJson.put("password", password);
@@ -102,40 +100,29 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
                 RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), rawJson.toString());
-
                 WebService.createApiService().validateCustomerLogin(body).enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-
                         Log.d("REG RESPONSE", "" + response);
-
+                        loginProgressBar.setVisibility(View.GONE);
                         if (response.isSuccessful()) {
                             //SUCCESSFUL LOGIN
                             try {
                                 JSONObject responseJson = new JSONObject(response.body());
-
                                 String userToken = responseJson.getString("token");
-
                                 SharedPreferences settings = getSharedPreferences(Constants.SHARED_PREFERENCE_NAME, MODE_PRIVATE);
-
                                 // WRITING VALUE
                                 SharedPreferences.Editor editor = settings.edit();
                                 editor.putString(Constants.SHARED_KEY_USER_TOKEN, userToken);
                                 editor.putString(Constants.SHARED_KEY_LOGGED_VALUE, "1");
                                 editor.apply();
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            loginProgressBar.setVisibility(View.GONE);
-
                             finish();
                             startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         } else {
-
                             if (response.message().matches("Bad Request")) {
                                 try {
                                     if (response.errorBody() != null) {
@@ -157,15 +144,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     @Override
                     public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
+                        loginProgressBar.setVisibility(View.GONE);
                         showToast("" + t.getMessage());
                     }
                 });
 
             } else {
+                loginProgressBar.setVisibility(View.GONE);
                 showToast("Password not be empty");
             }
         } else {
-
+            loginProgressBar.setVisibility(View.GONE);
             showToast("Mobile/Email not be empty");
         }
 

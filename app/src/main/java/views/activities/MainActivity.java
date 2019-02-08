@@ -1,7 +1,9 @@
 package views.activities;
 
+import android.content.DialogInterface;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 import com.android.dooyd.R;
@@ -23,9 +25,7 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
         if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
-
         tab_Icons = getResources().obtainTypedArray(R.array.tab_icons);
-
         mainViewPager.setAdapter(new MainPagerAdapter(getSupportFragmentManager(), getResources().getStringArray(R.array.tab_titles)));
         mainViewPager.addOnPageChangeListener(this);
         mainTabs.setupWithViewPager(mainViewPager);
@@ -58,8 +58,28 @@ public class MainActivity extends AppCompatActivity implements ViewPager.OnPageC
     @Override
     public void onPageSelected(int position) {
         if (position == (mainTabs.getTabCount() - 1)) {
-            finish();
+            showExitDialog();
         }
+    }
+
+    private void showExitDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Exit");
+        builder.setMessage("Are you sure to exit application?");
+        builder.setPositiveButton("yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+                finish();
+            }
+        });
+        builder.setNegativeButton("no", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.create().show();
     }
 
     @Override

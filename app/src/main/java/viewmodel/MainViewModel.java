@@ -1,5 +1,6 @@
 package viewmodel;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -39,7 +40,7 @@ public class MainViewModel extends ViewModel {
 
             @Override
             public void onFailure(@NonNull Call<List<MainItem>> call, @NonNull Throwable t) {
-
+                Log.e("OnFailure", "onFailure: " + call + t.getMessage());
             }
         });
     }

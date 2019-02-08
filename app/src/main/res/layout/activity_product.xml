@@ -8,5 +8,4 @@
         android:background="@color/colorRecyclerBackground"
         tools:context="views.activities.ProductActivity">
 
-
 </FrameLayout>

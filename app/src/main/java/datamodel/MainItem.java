@@ -15,11 +15,11 @@ public class MainItem {
 
     @SerializedName("cost")
     @Expose
-    private int itemPrice;
+    private float itemPrice;
 
     @SerializedName("cutcost")
     @Expose
-    private int itemCutPrice;
+    private float itemCutPrice;
 
     @SerializedName("quantity")
     @Expose
@@ -53,19 +53,19 @@ public class MainItem {
         this.itemName = itemName;
     }
 
-    public int getItemPrice() {
+    public float getItemPrice() {
         return itemPrice;
     }
 
-    public void setItemPrice(int itemPrice) {
+    public void setItemPrice(float itemPrice) {
         this.itemPrice = itemPrice;
     }
 
-    public int getItemCutPrice() {
+    public float getItemCutPrice() {
         return itemCutPrice;
     }
 
-    public void setItemCutPrice(int itemCutPrice) {
+    public void setItemCutPrice(float itemCutPrice) {
         this.itemCutPrice = itemCutPrice;
     }
 
